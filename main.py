@@ -136,3 +136,63 @@ for rank, (country, death_rate) in enumerate(sorted_2021_death_rate, 1):
 print("\nРейтинг по смертности от туберкулеза за 2022 год:")
 for rank, (country, death_rate) in enumerate(sorted_2022_death_rate, 1):
     print(f"{rank}. {country}: {death_rate} случаев на 100,000 людей")
+    
+# Расчет средних значений по обнаружению случаев туберкулеза
+print("\n" + "="*60)
+print("СРЕДНИЕ ЗНАЧЕНИЯ ПО УРОВНЮ ОБНАРУЖЕНИЯ СЛУЧАЕВ ТУБЕРКУЛЕЗА")
+print("="*60)
+
+# Собираем данные по обнаружению случаев туберкулеза за 2021 год
+detection_2021_values = []
+for country in data_2021:
+    value = data_2021[country].get("Tuberculosis case detection rate (%, all forms)", None)
+    if value:
+        try:
+            detection_2021_values.append(float(value))
+        except ValueError:
+            continue
+
+# Собираем данные по обнаружению случаев туберкулеза за 2022 год
+detection_2022_values = []
+for country in data_2022:
+    value = data_2022[country].get("Tuberculosis case detection rate (%, all forms)", None)
+    if value:
+        try:
+            detection_2022_values.append(float(value))
+        except ValueError:
+            continue
+
+# Вычисляем и выводим средние значения
+if detection_2021_values:
+    avg_2021 = sum(detection_2021_values) / len(detection_2021_values)
+    print(f"Среднее значение за 2021 год: {avg_2021:.1f}%")
+else:
+    print("Нет данных по обнаружению случаев туберкулеза за 2021 год")
+
+if detection_2022_values:
+    avg_2022 = sum(detection_2022_values) / len(detection_2022_values)
+    print(f"Среднее значение за 2022 год: {avg_2022:.1f}%")
+else:
+    print("Нет данных по обнаружению случаев туберкулеза за 2022 год")
+
+# Анализ изменений по успешности лечения
+print("\n" + "="*60)
+print("ИЗМЕНЕНИЯ ПО ПОКАЗАТЕЛЮ УСПЕШНОСТИ ЛЕЧЕНИЯ (2021 → 2022)")
+print("="*60)
+
+# Собираем и сравниваем данные по успешности лечения
+for country in data_2021:
+    if country in data_2022:
+        value_2021 = data_2021[country].get("Tuberculosis treatment success rate (% of new cases)", None)
+        value_2022 = data_2022[country].get("Tuberculosis treatment success rate (% of new cases)", None)
+        
+        if value_2021 and value_2022:
+            try:
+                val_2021_float = float(value_2021)
+                val_2022_float = float(value_2022)
+                change = val_2022_float - val_2021_float
+                trend = "↑ рост" if change > 0 else "↓ снижение" if change < 0 else "→ без изменений"
+                print(f"{country}: {val_2021_float}% → {val_2022_float}% ({change:+.1f}%) {trend}")
+            except ValueError:
+                continue
+            
